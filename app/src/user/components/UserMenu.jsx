@@ -15,6 +15,7 @@ export class UserMenu extends Component {
       isOpen: false,
     };
 
+    this.userMenuRef = React.createRef();
     this.togglePopover = this.togglePopover.bind(this);
   }
 
@@ -26,8 +27,8 @@ export class UserMenu extends Component {
     }
 
     return (
-      <SimpleTooltip target="userSettings" trigger="hover" placement="right">
-        User Settings
+      <SimpleTooltip target={this.userMenuRef} trigger="hover" placement="right">
+        User Menu
       </SimpleTooltip>
     );
   }
@@ -43,7 +44,7 @@ export class UserMenu extends Component {
     return (
       <Fragment>
         <Button
-          id="userSettings"
+          innerRef={this.userMenuRef}
           className="shadow-none border-0 rounded-circle st-icon-btn mb-3"
           color="light"
           onClick={this.togglePopover}
@@ -53,10 +54,10 @@ export class UserMenu extends Component {
 
         {this.tooltip}
         <Popover
-          target="userSettings"
+          target={this.userMenuRef}
           isOpen={isOpen}
           toggle={this.togglePopover}
-          delay={{ show: 120, hide: 250 }}
+          delay={{ show: 120, hide: 50 }}
           placement="right"
           trigger="legacy"
           hideArrow
@@ -64,21 +65,21 @@ export class UserMenu extends Component {
           <PopoverBody className="d-flex flex-column px-0 py-1">
             <Link
               className="d-flex align-items-center justify-content-start
-                py-2 px-3 text-decoration-none st-user-menu__item"
+                py-2 px-3 text-decoration-none st-popover-menu__item"
               to="/development"
             >
               <Icon className="mr-2" iconName="cpu" /> Development
             </Link>
             <Link
               className="d-flex align-items-center justify-content-start
-                py-2 px-3 text-decoration-none st-user-menu__item"
+                py-2 px-3 text-decoration-none st-popover-menu__item"
               to="/user-settings"
             >
-              <Icon className="mr-2" iconName="settings" /> User Settings
+              <Icon className="mr-2" iconName="settings" /> Settings
             </Link>
             <Link
               className="d-flex align-items-center justify-content-start
-                py-2 px-3 text-decoration-none st-user-menu__item"
+                py-2 px-3 text-decoration-none st-popover-menu__item"
               to="/signin"
               onClick={signOut}
             >

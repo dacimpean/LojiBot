@@ -1,137 +1,110 @@
-from django.shortcuts import render
-from django.core.mail import send_mail
-from django.core.mail import EmailMultiAlternatives
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from rest_framework import viewsets
-from rest_framework.views import APIView
+from django.template.loader import get_template
+from django.template.exceptions import TemplateDoesNotExist
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 
-from . import utils
-
-from . import models
+from .models import UserCompany, ExtendUser, PreRegisteredTeamMember
 from . import serializers
 
 
-LOJI_EMAILS = {
-    'support': 'lojitest@gmail.com',
-    'customer_service': 'customerservice@lojiservices.com',
-    'tech_support': 'it@lojiservices.com'
-}
-
-LOJI_URLS = {
-    'home': 'https://www.loji.com/',
-    'register': 'https://www.loji.com/register/',
-    'pre_registration_form': 'https://www.loji.com/pre-register/',
-}
-
-
-# Create your views here.
-
-class UserListView(generics.ListAPIView):
-    '''
-    get:
-    Get all users in Loji
-    '''
-    queryset = models.ExtendUser.objects.all()
-    serializer_class = serializers.UserSerializer
-
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = serializers.UserSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-class TeamRegistrationView(generics.CreateAPIView):
-    # Share the same serializer as a regular user, with modifications
-    # servier side - Company_id and etc
-    serializer_class = serializers.SignupSerializer
-    permision_classes = (AllowAny, )
-
-    def post(self, request, *args, **kwargs):
-        pass
-
-class PreRegisteredTeamView(generics.CreateAPIView):
-    '''
-    post:
-    Sends invitation to a team member
-    '''
-    invite_email_tempalte = ''
-    serializer_class = serializers.PreRegisteredTeamSerializer
-    permission_classes = (AllowAny,)
-
-    def post(self, request, *args, **kwargs):
-        serialized_team_member = serializers.PreRegisteredTeamSerializer(data=request.data)
-        if serialized_team_member.is_valid():
-            if PreRegisteredTeamView.send_email(serialized_team_member.initial_data['email'],
-                                                request.user.username,
-                                                request.user.company_id,
-                                                request):
-                # Create a user in the Preregistered table
-                new_user = PreRegisteredTeam(serialized_team_member.initial_data['email'], request.user.company_id)
-                new_user.save()
-                return Response(status=status.HTTP_201_CREATED)
-            return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(serialized_user._errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def check_company_count():
-        '''
-        Check to see if the manager has avaliable slots to send
-        out more invites.
-        '''
-        return None
-
-    def send_email(email, username, company_id, request):
-        '''
-        Prepare the email and send it out the invitation
-        '''
-        # tokens = serializers.MyTokenObtainPairSerializer(request.data).validate(request.data)
-        access_token = utils.JWTHelper.get_simplejwt_tokens(request.user)['access']
-        subject = "Hello! " + str(username) + " has sent you an invite!"
-        from_email = LOJI_EMAILS['support']
-        # TODO remove this and create a proper invitation.
-        html_content = ('''
-            Go here to register...
-            <a href='/'>Sign up!</a>
-            TOKEN: %s
-        ''' % str(access_token))
-        text_content = ''
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [email,])
-        msg.attach_alternative(html_content, "text/html")
-        if msg.send():
-            return True
-        return False
-
 class RegisterUsersView(generics.CreateAPIView):
-    '''
+    """
     get:
 
     post:
     Register a user and assign it a default company value
-    '''
+    """
     serializer_class = serializers.SignupSerializer
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
         serialized_user = serializers.SignupSerializer(data=request.data)
         if serialized_user.is_valid():
-            # Default company to beign with
-            company = models.UserCompany(name='John Peterson\'s Company')
-            company.save()
-            user = models.ExtendUser.objects.create_user(
-                serialized_user.initial_data['username'],
-                serialized_user.initial_data['email'],
-                serialized_user.initial_data['password'],
-            )
+            email = serialized_user.validated_data.get('email')
+            try:
+                pre_registered_user = PreRegisteredTeamMember.objects.get(email=email)
+                company = UserCompany.objects.get(id=pre_registered_user.company_id_id)
+                pre_registered_user.delete()
+            except PreRegisteredTeamMember.DoesNotExist:
+                username = serialized_user.validated_data.get('username')
+                company = UserCompany(name="{}'s Company".format(username))
+                company.save()
+            user = ExtendUser.objects.create_user(**serialized_user.validated_data)
             user.company_id = company
             user.save()
 
             tokens = serializers.MyTokenObtainPairSerializer(request.data).validate(request.data)
             return Response(tokens, status=status.HTTP_201_CREATED)
         else:
-            return Response(serialized_user._errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serialized_user.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserInfoView(APIView):
-    def get(self,request):
-        return Response({'username':request.user.username,
-                         'email':request.user.email},status=status.HTTP_200_OK)
+
+class UserInfoView(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        serializer = serializers.UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PreRegisteredTeamMemberView(generics.CreateAPIView):
+    """
+    post:
+    Sends invitation to a team member
+    """
+    invite_email_template = 'email/invite_team_member'
+    serializer_class = serializers.PreRegisteredTeamMemberSerializer
+
+    def post(self, request, *args, **kwargs):
+        serialized_team_member = serializers.PreRegisteredTeamMemberSerializer(data=request.data)
+        if serialized_team_member.is_valid():
+            company_id = request.user.company_id.id
+            company = UserCompany.objects.get(id=company_id)
+            # TODO: validate user permissions/available team seats
+            pre_registered_team_member = PreRegisteredTeamMember(**serialized_team_member.validated_data,
+                                                                 company_id=company)
+            pre_registered_team_member.save()
+            self.send_invitation_mail(request.user, company, pre_registered_team_member)
+            serialized_response = serializers.PreRegisteredTeamMemberSerializer(pre_registered_team_member)
+            return Response(serialized_response.data, status=status.HTTP_201_CREATED)
+
+        return Response(serialized_team_member.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def send_invitation_mail(self, manager, company, invited_user):
+        subject = "Loji: You've been invited to {}".format(company.name)
+        sender = settings.EMAIL_SENDER
+        context = {
+            'manager': manager.email,
+            'company_name': company.name,
+            'auth_link': settings.LINK_TO_SIGNUP,
+        }
+        try:
+            html_template = get_template("{}.html".format(self.invite_email_template))
+            text_template = get_template("{}.txt".format(self.invite_email_template))
+            html = html_template.render(context)
+            text = text_template.render(context)
+            message = EmailMultiAlternatives(subject, text, sender, (invited_user.email, ))
+            message.attach_alternative(html, 'text/html')
+        except TemplateDoesNotExist:
+            message_text = "{} invited you to {} company".format(manager.email, company.name)
+            message = EmailMultiAlternatives(subject, message_text, sender, (invited_user.email,))
+        message.send()
+
+
+class TeamMembersView(generics.ListAPIView):
+    serializer_class = serializers.UserSerializer
+
+    def get_queryset(self):
+        company_id = self.request.user.company_id
+        return ExtendUser.objects.filter(company_id=company_id)
+
+
+class InvitedUsersView(generics.ListAPIView):
+    serializer_class = serializers.PreRegisteredTeamMemberSerializer
+
+    def get_queryset(self):
+        company_id = self.request.user.company_id
+        return PreRegisteredTeamMember.objects.filter(company_id_id=company_id)
+

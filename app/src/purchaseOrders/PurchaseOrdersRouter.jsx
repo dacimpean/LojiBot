@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route } from 'react-router-dom';
+
 import PurchaseOrdersContainer from './components/PurchaseOrders';
+import PurchaseOrderContainer from './components/PurchaseOrder';
+import PurchaseOrdersVendorsContainer from './components/PurchaseOrdersVendors';
+import PurchaseOrdersVendorContainer from './components/PurchaseOrdersVendor';
+
 
 export default function PurchaseOrdersRouter({ match }) {
   const { path } = match;
@@ -12,8 +17,18 @@ export default function PurchaseOrdersRouter({ match }) {
         <Route exact path={path} component={PurchaseOrdersContainer} />
         <Route
           exact
-          path={`${path}/:id/remove`}
-          component={(props) => (<PurchaseOrdersContainer isRemoveModalShown {...props} />)}
+          path={`${path}/:id`}
+          component={PurchaseOrderContainer}
+        />
+        <Route
+          exact
+          path={`${path}/vendors`}
+          component={PurchaseOrdersVendorsContainer}
+        />
+        <Route
+          exact
+          path={`${path}/vendors/:id`}
+          component={PurchaseOrdersVendorContainer}
         />
       </Switch>
     </section>

@@ -11,6 +11,7 @@ import {
 } from './authActions';
 import * as actionTypes from './authActionTypes';
 import * as authService from '../../auth/authService';
+import { ACTIVE_USER_UPDATED } from '../user/userActionTypes';
 
 jest.mock('../../auth/authService');
 
@@ -45,13 +46,17 @@ describe('Auth Actions', () => {
 
   describe('validateToken', () => {
     it('should dispatch handle successful token validation', (done) => {
+      const user = { email: 'test@test.test' };
       const store = mockStore({ accessToken: 'access', refreshToken: 'refresh' });
       const expectedActions = [{
+        type: ACTIVE_USER_UPDATED,
+        user,
+      }, {
         type: actionTypes.TOKEN_VALID,
         access: 'access',
         refresh: 'refresh',
       }];
-      authService.validateToken.mockResolvedValue({});
+      authService.validateToken.mockResolvedValue({ data: user });
       store.dispatch(validateToken('access', 'refresh'))
         .then(() => {
           expect(authService.validateToken).toHaveBeenCalledWith('access');

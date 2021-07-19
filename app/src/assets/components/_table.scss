@@ -4,9 +4,43 @@
       background-color: $white-smoke !important;
     }
   }
+
+  thead > tr:hover {
+    background-color: transparent !important;
+  }
+
   td {
-    padding: 0 !important;
+    padding: 0 1rem !important;
     vertical-align: middle;
+  }
+
+  th {
+    padding: 1rem !important;
+    vertical-align: middle;
+    transition: 0.3s ease;
+
+    &:hover {
+      background-color: $white-smoke;
+    }
+  }
+
+  &--small {
+    th {
+      padding: 0.5rem !important;
+      background-color: $white;
+    }
+
+    td {
+      padding: 0.125rem !important;
+    }
+  }
+
+  &__sort-icon {
+    &--muted {
+      color: $grey-gainsboro;
+      opacity: 0;
+      transition: 0.2s;
+    }
   }
 
   &__th {
@@ -15,6 +49,13 @@
 
     &--sortable {
       cursor: pointer;
+
+      &:hover {
+        .st-table__sort-icon--muted {
+          color: $grey;
+          opacity: 1;
+        }
+      }
     }
   }
 }

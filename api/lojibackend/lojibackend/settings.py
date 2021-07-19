@@ -29,7 +29,6 @@ DB_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'password')
 DB_HOST = os.getenv('POSTGRES_URI', 'localhost')
 DB_PORT = os.getenv('POSTGRES_PORT', '5432')
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
@@ -65,14 +64,15 @@ INSTALLED_APPS = [
     'api',
     'users',
     'purchase_orders',
-    'quickbooks_sync'
+    'quickbooks_sync',
+    'send'
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'lojitest@gmail.com'
-EMAIL_HOST_PASSWORD = 'n^U6v@x/PFyC~(K.'
+EMAIL_HOST = 'smtp.1and1.com'
+EMAIL_HOST_USER = 'developer@sandtexusa.com'
+EMAIL_HOST_PASSWORD = 'cXY7RqET5T'
 EMAIL_PORT = 587
 
 SITE_ID = 1
@@ -125,6 +125,9 @@ DATABASES = {
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
         'PORT': DB_PORT,
+        'TEST': {
+            'NAME': 'loji_test'
+        },
     }
 }
 
@@ -202,7 +205,7 @@ INTUIT_CLIENT_ID = "Q0kbUO2D1EqcPLdxXJN40jXzh95YvUysVyqbiO6TKOn7uUnKdt"
 INTUIT_CLIENT_SECRET = "IC0S4vmg7C6Y5wiQngelxEqlha8PCcXNM0OZo9V7"
 INTUIT_REDIRECT_URI = "http://{}:{}/api/v1/qb/redirect/".format(API_URL, API_PORT)
 INTUIT_APP_REDIRECT_URI = "http://{}:{}/oauth".format(APP_URL, APP_PORT)
-INTUIT_ENVIROMENT = "sandbox"
+INTUIT_ENVIRONMENT = "sandbox"
 INTUIT_SCOPES = [Scopes.OPENID, Scopes.ACCOUNTING, Scopes.EMAIL, Scopes.PROFILE]
 INTUIT_QBO_BASE_URL = os.getenv('INTUIT_QBO_BASE_URL', 'https://sandbox-quickbooks.api.intuit.com')
 
@@ -210,3 +213,6 @@ INTUIT_QBO_BASE_URL = os.getenv('INTUIT_QBO_BASE_URL', 'https://sandbox-quickboo
 AWS_REFRESH_TOKENS_ENDPOINT = os.getenv('AWS_REFRESH_TOKENS_ENDPOINT',
                                         'https://wyklx960of.execute-api.us-east-2.amazonaws.com/beta-v6/GetRefreshToken')
 AWS_API_KEY = os.getenv('AWS_API_KEY', 'tJVfveegtl9HkBB2N0SP34uf0lTVFo6S3aGiqaSR')
+
+LINK_TO_SIGNUP = "http://{}:{}/signup".format(APP_URL, APP_PORT)
+EMAIL_SENDER = 'hello@loji.com'

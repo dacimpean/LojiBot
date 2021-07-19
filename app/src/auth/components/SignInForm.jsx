@@ -37,10 +37,10 @@ export default function SignInForm({ onSubmit, isCustomerAuthenticating }) {
           <Form onSubmit={handleSubmit}>
             <FormGroup>
               <Label htmlFor="loginInput">
-              Email address / Username
+              Username
               </Label>
               <Field
-                type="email"
+                type="text"
                 name="username"
                 id="loginInput"
                 placeholder="john.smith"

@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils.six import text_type
 
 import json,requests
-from purchase_orders.models import Vendor, PurchaseOrder, Part, PurchaseOrderItem
+from purchase_orders.models import Vendor, PurchaseOrder, PurchaseOrderItem
 from users.models import ExtendUser
 from users.models import UserCompany
 from intuitlib.client import AuthClient
@@ -20,7 +20,7 @@ intuit_auth_client = AuthClient(
     settings.INTUIT_CLIENT_ID,
     settings.INTUIT_CLIENT_SECRET,
     settings.INTUIT_REDIRECT_URI,
-    settings.INTUIT_ENVIROMENT,
+    settings.INTUIT_ENVIRONMENT,
 )
 
 @api_view(['GET'])
@@ -38,43 +38,43 @@ def auth(request):
 @authentication_classes(())
 @permission_classes(())
 def auth_redirect(request):
-    '''
+    """
     Redirect view for intuit oauth2 flow
     This is the last step where intuit server grants access to client account
-    '''
-    #convert auth code to access token
+    """
+    # convert auth code to access token
     intuit_auth_client.get_bearer_token(request.GET.get('code'))
-    #get info about user
+    # get info about user
     userinfo = json.loads(intuit_auth_client.get_user_info().content)
 
-    #get or create new user
-    user,created = ExtendUser.objects.get_or_create(email=userinfo['email'],
-                                                    username=userinfo['email'])
+    # get or create new user
+    user, created = ExtendUser.objects.get_or_create(email=userinfo['email'],
+                                                     username=userinfo['email'])
 
-    #check if there is a default app company exist and create if not
-    uc,created = UserCompany.objects.get_or_create(id=0)
-    if(created):
-        uc.name = "John Peterson's Company"
+    realm_id = request.GET.get('realmId')
+    # check if there is a default app company exist and create if not
+    uc, created = UserCompany.objects.get_or_create(realmid=realm_id)
+    if created:
+        uc.name = 'Company_{}'.format(realm_id)
         uc.save()
     user.company_id = uc
     user.save()
 
-    #save access token for QB for user
-    qb_user,created = QuickBooksUser.objects.get_or_create(user = user)
+    # save access token for QB for user
+    qb_user, created = QuickBooksUser.objects.get_or_create(user=user)
     qb_user.access_token = intuit_auth_client.access_token
     qb_user.refresh_token = intuit_auth_client.refresh_token
-    qb_user.realm_id = request.GET.get('realmId')
+    qb_user.realm_id = realm_id
     qb_user.save()
 
-
-    #generate JWT token for user
+    # generate JWT token for user
     refresh = MyTokenObtainPairSerializer.get_token(user)
 
-    #make first sync
+    # make first sync
     response = fetch_purchase_orders(user)
 
-    if(response.status_code == 200):
-        #send JWT token to the frontend
+    if response.status_code == 200:
+        # send JWT token to the frontend
         return redirect("{}?access={}&refresh={}".format(
             settings.INTUIT_APP_REDIRECT_URI,
             text_type(refresh.access_token),
@@ -123,7 +123,8 @@ def test_qb_connect(request):
     domain = company_info.get('domain', '')
     company_name = company_info.get('CompanyName', '')
     if not domain and not company_name:
-        message = 'an incorrect QB server response (code {}):{}'.format(qb_connect_res['status'], qb_connect_res['data'])
+        message = 'an incorrect QB server response (code {}):{}'.format(
+            qb_connect_res['status'], qb_connect_res['data'])
         return Response({'error': message}, status=400)
     message = 'you are successfully connected to domain {} and company {}, {}'.format(domain, company_name,
                                                                                       qb_connect_res['success'])
@@ -194,42 +195,84 @@ def fetch_purchase_orders(user):
 
         # iterate purchase orders
         record_count = 0
+        record_updated = 0
         record_created = 0
+        record_hold = 0
+
+        try:
+            company = UserCompany.objects.get(realmid=realm_id)
+        except UserCompany.DoesNotExist:
+            return Response({'error': 'realmID is not associated with an existing company',
+                             'data': 'realmID={}'.format(realm_id)}, status=422)
+
+        Vendor.objects.filter(company=company).update(sync=False)
+        PurchaseOrder.objects.filter(company=company).update(sync=False)
+
         for po in pos_content['QueryResponse']['PurchaseOrder']:
             record_count += 1
-            vendor, created = Vendor.objects.get_or_create(qb_id=po['VendorRef']['value'])
-            if created:
-                vendor.name = po['VendorRef']['name']
-                vendor.city = po['VendorAddr']['Line4'].split(',')[0]
-                vendor.state = po['VendorAddr']['Line4'].split()[1]
-                vendor.zip = po['VendorAddr']['Line4'].split()[2]
-                vendor.contact_name = po['VendorAddr']['Line1']
-                vendor.save()
 
-            purchase_order, created = PurchaseOrder.objects.get_or_create(qb_id=po['Id'],
-                                                                          vendor=vendor)
-            if created:
+            vendor_default = {'name': po['VendorRef']['name'],
+                              'city': po['VendorAddr']['Line4'].split(',')[0],
+                              'state': po['VendorAddr']['Line4'].split()[1],
+                              'zip': po['VendorAddr']['Line4'].split()[2],
+                              'contact_name': po['VendorAddr']['Line1'],
+                              'sync': True
+                              }
+            vendor, vendor_created = Vendor.objects.update_or_create(qb_id=po['VendorRef']['value'],
+                                                                     company=company,
+                                                                     defaults=vendor_default)
+            if vendor_created:
+                print('debug: created vendor {}'.format(po['VendorRef']['name']))
+
+            po_defaults = {'vendor': vendor,
+                           'time_created': po['MetaData']['CreateTime'],
+                           'time_modified': po['MetaData']['LastUpdatedTime'],
+                           'total_amount': po['TotalAmt'],
+                           'sync': True
+                           }
+            purchase_order, po_created = PurchaseOrder.objects.update_or_create(qb_id=po['Id'],
+                                                                                company=company,
+                                                                                defaults=po_defaults)
+            if po_created:
                 record_created += 1
-                purchase_order.vendor = vendor
-                purchase_order.company = user.company_id
-                purchase_order.time_created = po['MetaData']['CreateTime']
-                purchase_order.time_modified = po['MetaData']['LastUpdatedTime']
                 purchase_order.status = 'OA'
                 purchase_order.save()
+                print('debug: created po {}'.format(purchase_order))
+            else:
+                record_updated += 1
+                items_queryset = PurchaseOrderItem.objects.filter(po=purchase_order)
+                if items_queryset.exists():
+                    items_queryset.delete()
 
-                # if purchase order is new we filling info for it
-                for line in po['Line']:
-                    if line['DetailType'] == 'ItemBasedExpenseLineDetail':
-                        part, created = Part.objects.get_or_create(qb_id=line['ItemBasedExpenseLineDetail']['ItemRef']['value'])
-                        # creating items
-                        if created:
-                            part.name = line['ItemBasedExpenseLineDetail']['ItemRef']['name']
-                            part.save()
-                        poi = PurchaseOrderItem.objects.create(po=purchase_order,
-                                                               part=part,
-                                                               unit_price=line['ItemBasedExpenseLineDetail']['UnitPrice'],
-                                                               qty=line['ItemBasedExpenseLineDetail']['Qty'])
-        message = 'data successfully synchronized for {}/{} records'.format(record_count, record_created)
+            for line in po['Line']:
+                if line['DetailType'] == 'ItemBasedExpenseLineDetail':
+                    PurchaseOrderItem.objects.create(po=purchase_order,
+                                                     unit_price=line['ItemBasedExpenseLineDetail']['UnitPrice'],
+                                                     qty=line['ItemBasedExpenseLineDetail']['Qty'],
+                                                     name=line['ItemBasedExpenseLineDetail']['ItemRef']['name'],
+                                                     desc=line.get('Description', ''),
+                                                     qb_link=line['ItemBasedExpenseLineDetail']['ItemRef']['value']
+                                                     )
+        qset_po_completed = PurchaseOrder.objects.filter(company=company, status='COMPLETED')
+        for po_completed in qset_po_completed:
+            Vendor.objects.get(id=po_completed.vendor).update(sync=True)
+            po_completed.sync = True
+            po_completed.save()
+        qset_po_hold = PurchaseOrder.objects.filter(company=company, sync=False)
+        if qset_po_hold.exists():
+            record_hold = qset_po_hold.count()
+            for po_hold in qset_po_hold:
+                Vendor.objects.get(id=po_hold.vendor).update(sync=True)
+                po_hold.sync = True
+                po_hold.status = 'HOLD'
+                po_hold.save()
+        queryset_unused_vendors = Vendor.objects.filter(company=company, sync=False)
+        if queryset_unused_vendors.exists():
+            count = queryset_unused_vendors.count()
+            queryset_unused_vendors.delete()
+            print('debug: deleted {} unused vendors'.format(count))
+        message = 'data successfully synchronized for created:{}, updated:{}, set to hold:{} records'.format(
+            record_created, record_updated, record_hold)
         print('debug: {}'.format(message))
         return Response({'success': message}, status=qb_connect_res['status'])
 

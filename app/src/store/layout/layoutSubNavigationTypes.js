@@ -1,0 +1,2 @@
+export const PURCHASE_ORDERS = 'PURCHASE_ORDERS';
+export const PURCHASE_ORDER = 'PURCHASE_ORDER';

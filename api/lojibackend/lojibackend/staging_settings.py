@@ -17,6 +17,7 @@ from intuitlib.enums import Scopes
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+APP_URL = "dypqjnd361hg9.cloudfront.net"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -53,7 +54,8 @@ INSTALLED_APPS = [
     'api',
     'users',
     'purchase_orders',
-    'quickbooks_sync'
+    'quickbooks_sync',
+    'send'
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -83,7 +85,7 @@ MIDDLEWARE = [
 # CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = (
-    "dypqjnd361hg9.cloudfront.net"
+    APP_URL,
 )
 
 
@@ -196,10 +198,13 @@ INTUIT_CLIENT_ID = "Q0kbUO2D1EqcPLdxXJN40jXzh95YvUysVyqbiO6TKOn7uUnKdt"
 INTUIT_CLIENT_SECRET = "IC0S4vmg7C6Y5wiQngelxEqlha8PCcXNM0OZo9V7"
 INTUIT_REDIRECT_URI = "http://ec2-3-18-103-182.us-east-2.compute.amazonaws.com/api/v1/qb/redirect/"
 INTUIT_APP_REDIRECT_URI = "http://dypqjnd361hg9.cloudfront.net/oauth"
-INTUIT_ENVIROMENT = "sandbox"
+INTUIT_ENVIRONMENT = "sandbox"
 INTUIT_SCOPES = [Scopes.OPENID, Scopes.ACCOUNTING, Scopes.EMAIL, Scopes.PROFILE]
 INTUIT_QBO_BASE_URL = 'https://sandbox-quickbooks.api.intuit.com'
 
 # AWS settings
 AWS_REFRESH_TOKENS_ENDPOINT = 'https://wyklx960of.execute-api.us-east-2.amazonaws.com/beta-v6/GetRefreshToken'
 AWS_API_KEY = 'tJVfveegtl9HkBB2N0SP34uf0lTVFo6S3aGiqaSR'
+
+LINK_TO_SIGNUP = "http://{}/signup".format(APP_URL)
+EMAIL_SENDER = 'hello@loji.com'

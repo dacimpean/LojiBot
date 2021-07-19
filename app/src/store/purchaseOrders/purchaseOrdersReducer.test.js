@@ -2,31 +2,41 @@ import purchaseOrdersReducer from './purchaseOrdersReducer';
 import * as actionTypes from './purchaseOrdersActionTypes';
 
 describe('Purchase Orders Reducer', () => {
+  it('should indicate that PO data is fetching', () => {
+    const action = {
+      type: actionTypes.FETCH_PO_REQUESTED,
+    };
+    const { arePOFetching } = purchaseOrdersReducer(undefined, action);
+    expect(arePOFetching).toBe(true);
+  });
+
   it('should update purchase orders', () => {
     const purchaseOrder = { status: 'OA' };
     const action = {
-      type: actionTypes.FETCHING_PO_SUCCEED,
+      type: actionTypes.FETCH_PO_SUCCEED,
       purchaseOrders: [purchaseOrder],
     };
-    expect(purchaseOrdersReducer(undefined, action)).toEqual({
-      purchaseOrders: {
-        OA: [purchaseOrder],
-      },
-      vendors: {},
+    const { purchaseOrders } = purchaseOrdersReducer(undefined, action);
+    expect(purchaseOrders).toEqual({
+      OA: [purchaseOrder],
     });
   });
 
-  it('should update vendors', () => {
-    const vendors = [{ id: 'vendorId', name: 'vendorName' }];
+  it('should update the state if PO fetch is failed', () => {
     const action = {
-      type: actionTypes.FETCHING_VENDORS_SUCCEED,
-      vendors,
+      type: actionTypes.FETCH_PO_FAILED,
     };
-    expect(purchaseOrdersReducer(undefined, action)).toEqual({
-      purchaseOrders: {},
-      vendors: {
-        [vendors[0].id]: vendors[0],
-      },
-    });
+    const { arePOFetching } = purchaseOrdersReducer({ arePOFetching: true }, action);
+    expect(arePOFetching).toBe(false);
+  });
+
+  it('should update active filter for purchase orders', () => {
+    const payload = { title: 'Due Date', asc: false };
+    const action = {
+      type: actionTypes.CHANGE_ACTIVE_FILTER,
+      activeFilter: payload,
+    };
+    const { purchaseOrderTableHeadOptions } = purchaseOrdersReducer(undefined, action);
+    expect(purchaseOrderTableHeadOptions.activeFilter).toEqual(payload);
   });
 });

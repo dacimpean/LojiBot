@@ -59,46 +59,49 @@ export class AppRouter extends Component {
             : null
           }
 
-          <div className="d-flex flex-column flex-grow-1 rounded-left px-4 py-2 st-page shadow-z2">
-            { isAuthenticated ? (<Header />) : null }
-            <Switch>
-              <Route path="/" render={() => <Redirect to="/dashboard" />} exact />
-              <Route
-                path="/oauth"
-                render={(props) => (
-                  <OAuth
-                    validateToken={validateTokenOnMount}
-                    {...props}
-                  />
-                )}
-              />
-              <Route path="/signin" component={SignIn} />
-              <Route path="/signup" component={SignUp} />
-              <Route path="/forgot-password" component={ForgotPassword} />
-              <Route path="/reset-password" component={ResetPassword} />
-              <PrivateRoute
-                isAuthenticated={isAuthenticated}
-                path="/development"
-                component={DevelopmentRouter}
-              />
-              <PrivateRoute
-                path="/dashboard"
-                component={DashboardRouter}
-                isAuthenticated={isAuthenticated}
-              />
-              <PrivateRoute
-                path="/purchase-orders"
-                component={PurchaseOrdersRouter}
-                isAuthenticated={isAuthenticated}
-              />
-              <PrivateRoute
-                path="/user-settings"
-                component={UserRouter}
-                isAuthenticated={isAuthenticated}
-              />
-              <Route component={NotMatch} />
-            </Switch>
-
+          <div
+            className="d-flex flex-column flex-grow-1 rounded-left p-0 st-page shadow-z2 h-100 overflow-hidden"
+          >
+            <div className="d-flex flex-column overflow-auto min-vh-100 px-4 py-2">
+              { isAuthenticated ? (<Header />) : null }
+              <Switch>
+                <Route path="/" render={() => <Redirect to="/dashboard" />} exact />
+                <Route
+                  path="/oauth"
+                  render={(props) => (
+                    <OAuth
+                      validateToken={validateTokenOnMount}
+                      {...props}
+                    />
+                  )}
+                />
+                <Route path="/signin" component={SignIn} />
+                <Route path="/signup" component={SignUp} />
+                <Route path="/forgot-password" component={ForgotPassword} />
+                <Route path="/reset-password" component={ResetPassword} />
+                <PrivateRoute
+                  isAuthenticated={isAuthenticated}
+                  path="/development"
+                  component={DevelopmentRouter}
+                />
+                <PrivateRoute
+                  path="/dashboard"
+                  component={DashboardRouter}
+                  isAuthenticated={isAuthenticated}
+                />
+                <PrivateRoute
+                  path="/purchase-orders"
+                  component={PurchaseOrdersRouter}
+                  isAuthenticated={isAuthenticated}
+                />
+                <PrivateRoute
+                  path="/user-settings"
+                  component={UserRouter}
+                  isAuthenticated={isAuthenticated}
+                />
+                <Route component={NotMatch} />
+              </Switch>
+            </div>
           </div>
         </main>
       </Router>

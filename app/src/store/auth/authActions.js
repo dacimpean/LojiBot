@@ -1,4 +1,5 @@
 import * as actionTypes from './authActionTypes';
+import { ACTIVE_USER_UPDATED } from '../user/userActionTypes';
 import { createAction } from '../../utils';
 import * as authService from '../../auth/authService';
 
@@ -16,10 +17,10 @@ export const handleFailedRefreshing = createAction(actionTypes.REFRESHING_FAILED
 
 export const validateToken = (accessToken, refreshToken) => (dispatch) => authService
   .validateToken(accessToken)
-  .then(() => {
+  .then(({ data }) => {
     authService.setAccessTokenInStorage(accessToken);
     authService.setRefreshTokenInStorage(refreshToken);
-
+    dispatch({ type: ACTIVE_USER_UPDATED, user: data });
     return dispatch(handleValidToken(accessToken, refreshToken));
   })
   .catch(() => {

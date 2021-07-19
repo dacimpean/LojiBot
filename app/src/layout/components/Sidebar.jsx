@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { Icon, SimpleTooltip } from '../../utils';
 import UserMenuContainer from '../../user/components/UserMenu';
 import Navigation from './Navigation';
+import SubNavigationContainer from './SubNavigation';
 
 export default function Sidebar({ isSidebarCollapsed }) {
   const sidebarClassNames = classNames(
@@ -32,9 +33,6 @@ export default function Sidebar({ isSidebarCollapsed }) {
               <Icon iconName="globe" />
             </h2>
           </Link>
-          <SimpleTooltip target="loji" placement="right" trigger="hover">
-            Loji Service
-          </SimpleTooltip>
           <Navigation />
         </div>
 
@@ -55,6 +53,7 @@ export default function Sidebar({ isSidebarCollapsed }) {
       </div>
       <div className="d-flex flex-column flex-grow-1 flex-shrink-1 px-2 py-2 st-sidebar--helper">
         <h5 className="text-center pt-2">Loji Service</h5>
+        <SubNavigationContainer />
       </div>
     </div>
   );

@@ -5,11 +5,10 @@ from . import views
 
 app_name = 'purchaseorders'
 router = routers.DefaultRouter()
-router.register(r'vendors', views.VendorViewSet)
-router.register(r'purchaseorders', views.PurchaseOrderViewSet, 'purchaseorders')
-router.register(r'purchaseordernote', views.PurchaseOrderNoteViewSet, 'purchaseordernotes')
-router.register(r'part', views.PartViewSet, 'part')
-router.register(r'purchaseorderpart', views.PurchaseOrderItemViewSet, 'purchaseorderspart')
+router.register(r'vendors', views.VendorViewSet, 'po_vendors')
+router.register(r'purchaseorders', views.PurchaseOrderViewSet, 'purchase_orders')
+router.register(r'purchaseordernotes', views.PurchaseOrderNoteViewSet, 'po_notes')
+router.register(r'purchaseorderitems', views.PurchaseOrderItemViewSet, 'po_items')
 router.default_schema_renderers = [CoreJSONRenderer]
 
 

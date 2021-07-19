@@ -3,3 +3,9 @@
   z-index: 1;
   background-color: $white;
 }
+
+.st-order-items {
+  &__container {
+    background-color: $grey-gainsboro;
+  }
+}

@@ -1,0 +1,2 @@
+{{ manager }} invited you to a {{ company_name }} company.
+Sign up to Loji App {{ auth_link }} to get access to it.

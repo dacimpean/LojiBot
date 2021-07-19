@@ -3,6 +3,7 @@ import { createReducer } from '../../utils';
 
 const initialState = {
   isSidebarCollapsed: false,
+  subNavigationType: '',
   title: 'Loji',
 };
 
@@ -15,5 +16,10 @@ export default createReducer(initialState, {
   [actionTypes.UPDATE_TITLE]: (state, action) => ({
     ...state,
     title: action.title,
+  }),
+
+  [actionTypes.CHANGE_SUB_NAVIGATION]: (state, action) => ({
+    ...state,
+    subNavigationType: action.subNavigationType,
   }),
 });

@@ -3,18 +3,6 @@ from rest_framework import serializers
 from purchase_orders.models import *
 
 
-class CompanySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Company
-        fields = ['name']
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ['user', 'company', 'phone', 'manager']
-
-
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
@@ -34,16 +22,10 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
 class PurchaseOrderNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrderNote
-        fields = ['user', 'po', 'note', 'date_created', 'status']
-
-
-class PartSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Part
-        fields = ['name', 'brand', 'desc']
+        fields = ['id', 'user', 'po', 'note', 'date_created', 'status']
 
 
 class PurchaseOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrderItem
-        fields = ['po', 'part',  'unit_price', 'qty']
+        fields = ['id', 'po', 'unit_price', 'qty', 'name', 'desc', 'qb_link']

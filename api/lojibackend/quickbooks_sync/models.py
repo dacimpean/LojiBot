@@ -10,4 +10,3 @@ class QuickBooksUser(models.Model):
 
     def __str__(self):
         return str(self.user)
-# Create your models here.

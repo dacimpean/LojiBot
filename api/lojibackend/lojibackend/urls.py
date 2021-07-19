@@ -43,14 +43,15 @@ urlpatterns = [
     path('docs/', include_docs_urls(title='Loji Docs', public=True, schema_url='http://sandtex-host.com', generator_class=router.SchemaGenerator,
                                     authentication_classes=[],
                                     permission_classes=[])),
-    path('swagger(?P<format>\.json|\.yaml)', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path(r'swagger(?P<format>\.json|\.yaml)', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
     # path('api/v1/', include('api.urls')),
     path('api/v1/token/', TokenObtainPairView.as_view()),
     path('api/v1/token/refresh/', TokenRefreshView.as_view()),
-    path('api/v1/user/', include('users.urls')),
+    path('api/v1/user/', include('users.urls'), name='users'),
     path('api/v1/po/', include('purchase_orders.urls')),
-    path('api/v1/qb/', include('quickbooks_sync.urls'))
+    path('api/v1/qb/', include('quickbooks_sync.urls')),
+    path('api/v1/send/', include('send.urls'))
 ]

@@ -1,12 +1,10 @@
+import pycountry
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import User
 from lojibackend.settings import AUTH_USER_MODEL
 from django.db import models
-from users.models import UserCompany
 
-import pycountry
-
+from users.models import UserCompany, ExtendUser
 
 COUNTRIES = [(country.alpha_2, country.name) for country in pycountry.countries]
 
@@ -46,31 +44,6 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class Company(models.Model):
-    name = models.CharField(verbose_name=_('Name'), max_length=100)
-
-    class Meta:
-        verbose_name = _('Company')
-        verbose_name_plural = _('Companies')
-
-    def __str__(self):
-        return self.name
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(AUTH_USER_MODEL, verbose_name=_('User'), on_delete=models.CASCADE)
-    company = models.ForeignKey(Company, verbose_name=_('Company'), on_delete=models.CASCADE)
-    phone = models.CharField(verbose_name=_('Phone'), validators=[phone_regex], max_length=17, blank=True)
-    manager = models.IntegerField(verbose_name=_('Manager'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _('Profile')
-        verbose_name_plural = _('Profiles')
-
-    def __str__(self):
-        return self.user.username
-
-
 class Vendor(models.Model):
     company = models.ForeignKey(UserCompany, verbose_name=_('Company'), on_delete=models.CASCADE, default=0)
     name = models.CharField(verbose_name=_('Name'), max_length=100)
@@ -88,6 +61,7 @@ class Vendor(models.Model):
     contact_name = models.CharField(verbose_name=_('Contact Name'), max_length=100, null=True, blank=True)
     email = models.EmailField(verbose_name=_('Email'), null=True, blank=True)
     qb_id = models.PositiveIntegerField(verbose_name=_('Id from QuickBooks'),null=True,blank=True)
+    sync = models.BooleanField(verbose_name=_('Synchronization flag'), default=True)
 
     class Meta:
         verbose_name = _('Vendor')
@@ -98,18 +72,18 @@ class Vendor(models.Model):
 
 
 class PurchaseOrder(models.Model):
-    users = models.ManyToManyField(Profile, blank=True, through='PurchaseOrderNote')
     vendor = models.ForeignKey(Vendor, verbose_name=_('Vendor'), on_delete=models.CASCADE)
     company = models.ForeignKey(UserCompany, verbose_name=_('Company'), on_delete=models.CASCADE,default=0)
-    time_created = models.DateTimeField(verbose_name=_('Created at'), auto_now_add=True)
-    time_modified = models.DateTimeField(verbose_name=_('Modified at'), auto_now=True)
+    time_created = models.DateTimeField(verbose_name=_('Created at'))
+    time_modified = models.DateTimeField(verbose_name=_('Modified at'))
     due_date = models.DateField(verbose_name=_('Due Date'), null=True, blank=True)
     ship_method = models.CharField(verbose_name=_('Ship Method'), max_length=100, null=True, blank=True)
     status = models.CharField(verbose_name=_('Status'), max_length=100, null=True, blank=True)
     ship_date = models.DateField(verbose_name=_('Ship Date'), null=True, blank=True)
     qb_id = models.PositiveIntegerField(verbose_name=_('Id from QuickBooks'),null=True,blank=True)
     tracking_number = models.CharField(max_length=16,verbose_name=_('Tracking number'),null=True,blank=True)
-
+    total_amount = models.DecimalField(verbose_name=_('Total amount'), max_digits=12, decimal_places=2, default=0)
+    sync = models.BooleanField(verbose_name=_('Synchronization flag'), default=True)
 
     class Meta:
         verbose_name = _('PurchaseOrder')
@@ -120,7 +94,7 @@ class PurchaseOrder(models.Model):
 
 
 class PurchaseOrderNote(models.Model):
-    user = models.ForeignKey(Profile, verbose_name=_('User'), on_delete=models.CASCADE)
+    user = models.ForeignKey(ExtendUser, verbose_name=_('User'), on_delete=models.CASCADE)
     po = models.ForeignKey(PurchaseOrder, verbose_name=_('PurchaseOrder'), on_delete=models.CASCADE)
     note = models.TextField(verbose_name=_('Note'), null=True, blank=True)
     date_created = models.DateTimeField(verbose_name=_('Created at'), auto_now_add=True)
@@ -134,31 +108,17 @@ class PurchaseOrderNote(models.Model):
         return self.user.user.username + ' - ' + self.po.vendor.name + ' - ' + self.po.company.name
 
 
-class Part(models.Model):
-    name = models.CharField(verbose_name=_('Name'), max_length=100)
-    brand = models.CharField(verbose_name=_('Brand'), max_length=100)
-    desc = models.CharField(verbose_name=_('Desc'), max_length=100)
-    qb_id = models.PositiveIntegerField(verbose_name=_('Id from QuickBooks'),null=True,blank=True)
-
-
-    class Meta:
-        verbose_name = _('Part')
-        verbose_name_plural = _('Parts')
-
-    def __str__(self):
-        return self.name
-
-
 class PurchaseOrderItem(models.Model):
     po = models.ForeignKey(PurchaseOrder, verbose_name=_('PurchaseOrder'), on_delete=models.CASCADE)
-    part = models.ForeignKey(Part, verbose_name=_('Part'), on_delete=models.CASCADE)
     unit_price = models.DecimalField(verbose_name=_('Unit Price'), max_digits=12, decimal_places=6, default=0)
     qty = models.IntegerField(verbose_name=_('Quantity'), default=0)
-
+    name = models.CharField(verbose_name=_('Name'), max_length=100)
+    desc = models.CharField(verbose_name=_('Desc'), max_length=100, blank=True)
+    qb_link = models.PositiveIntegerField(verbose_name=_('Id from QuickBooks'), null=True, blank=True)
 
     class Meta:
         verbose_name = _('PurchaseOrderItem')
         verbose_name_plural = _('PurchaseOrderItems')
 
     def __str__(self):
-        return self.part.name + ' - ' + str(self.qty)
+        return self.name + ' - ' + str(self.qty)

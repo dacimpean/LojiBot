@@ -1,0 +1,24 @@
+[run]
+branch = true
+omit =
+    */tests/*
+    */migrations/*
+    */urls.py
+    */settings/*
+    */*settings.py
+    */wsgi.py
+    manage.py
+    */__init__.py
+source = .
+
+[report]
+omit =
+    */tests/*
+    */migrations/*
+    */urls.py
+    */settings/*
+    */*settings.py
+    */wsgi.py
+    manage.py
+    */__init__.py
+show_missing = true

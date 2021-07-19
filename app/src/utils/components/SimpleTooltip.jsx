@@ -20,6 +20,15 @@ export default class SimpleTooltip extends Component {
     const { props } = this;
     const { isOpen } = this.state;
 
-    return <Tooltip isOpen={isOpen} toggle={this.toggleTooltip} delay={{ show: 150, hide: 200 }} {...props} />;
+    return (
+      <Tooltip
+        innerClassName="px-2 py-1 st-tooltip"
+        arrowClassName="d-none"
+        isOpen={isOpen}
+        toggle={this.toggleTooltip}
+        delay={{ show: 50, hide: 50 }}
+        {...props}
+      />
+    );
   }
 }

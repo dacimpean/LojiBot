@@ -1,0 +1,3 @@
+LojiBot Logistics Software
+Good day {{ username }}.
+Sandtex Intl.
