@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OAuth UI component should render progress bar 1`] = `
+<section
+  className="d-flex flex-column flex-grow-1 align-items-center justify-content-center"
+>
+  <div
+    className="px-4 py-3 shadow-z3 rounded"
+  >
+    <h5
+      className="text-center px-5"
+    >
+      Verifying your token...
+    </h5>
+    <Progress
+      animated={true}
+      max={100}
+      tag="div"
+      value={100}
+    />
+  </div>
+</section>
+`;
+
+exports[`OAuth UI component should render redirect to root if authentication succeed 1`] = `
+<Redirect
+  push={false}
+  to="/"
+/>
+`;
+
+exports[`OAuth UI component should render redirect to sign in if authentication failed 1`] = `
+<Redirect
+  push={false}
+  to="/signin"
+/>
+`;

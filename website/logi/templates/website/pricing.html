@@ -1,0 +1,86 @@
+{% extends 'core/index.html' %}
+{% load static %}
+{% block body-class %}hv-100 d-flex flex-column justify-content-between{% endblock %}
+{% block content %}
+<section>
+  <div class="container">
+    <div class="row justify-content-center mb-3 mb-md-5">
+      <div class="btn-group">
+        <b class="time-switcher btn btn-primary rounded-left" href="#">Monthly</b>
+        <a class="time-switcher btn btn-outline-primary rounded-right" href="#">Yearly</a>
+      </div>
+    </div>
+    <div class="row justify-content-center align-items-stretch">
+
+      <div class="col-md-4 mb-md-0 mb-5">
+        <div class="plan card border-0 shadow-z4">
+          <div class="card-header bg-primary py-4">
+            <h5 class="text-white text-center mb-2">Basic Plan</h5>
+            <h1 class="text-center text-white">&#36;9</h1>
+            <p class="text-center text-white m-0">per month</p>
+          </div>
+          <div class="card-body d-flex flex-column justify-content-between">
+            <ul class="list-unstyled mb-5">
+              <li class="text-center mb-3">Minor features</li>
+              <li class="text-center mb-3">Common Support</li>
+            </ul>
+
+            <div class="d-flex justify-content-center">
+              <a class="btn btn-lg btn-outline-primary" href="#">Choose Plan</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-md-0 mb-5">
+        <div class="plan plan--featured card border-0 shadow-z4">
+          <div class="card-header bg-primary py-4">
+            <h5 class="text-white text-center mb-2">Standard Plan</h5>
+            <h1 class="text-center text-white">&#36;19</h1>
+            <p class="text-center text-white m-0">per month</p>
+          </div>
+          <div class="plan__badge w-100 d-flex justify-content-center">
+            <span class="badge badge-pill badge-warning">most popular</span>
+          </div>
+          <div class="card-body d-flex flex-column justify-content-between">
+            <ul class="list-unstyled">
+              <li class="text-center mb-3">Major features</li>
+              <li class="text-center mb-3">Support 24/7</li>
+              <li class="text-center">API</li>
+            </ul>
+
+            <div class="d-flex justify-content-center">
+              <a class="btn btn-lg btn-outline-primary" href="#">Choose Plan</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-md-0 mb-5">
+        <div class="plan ard border-0 shadow-z4">
+          <div class="card-header bg-primary py-4">
+            <h5 class="text-white text-center mb-2">Pro Plan</h5>
+            <h1 class="text-center text-white">&#36;29</h1>
+            <p class="text-center text-white m-0">per month</p>
+
+          </div>
+          <div class="card-body d-flex flex-column justify-content-between">
+            <ul class="list-unstyled mb-5">
+              <li class="text-center mb-3">All features</li>
+              <li class="text-center mb-3">Premium Support 24/7</li>
+              <li class="text-center mb-3">Custom team roles</li>
+              <li class="text-center mb-3">Increased Request Limits</li>
+              <li class="text-center">API</li>
+            </ul>
+
+            <div class="d-flex justify-content-center">
+              <a class="btn btn-lg btn-outline-primary" href="#">Choose Plan</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

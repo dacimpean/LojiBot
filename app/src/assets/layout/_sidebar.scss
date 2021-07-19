@@ -1,0 +1,49 @@
+.st-sidebar {
+  width: $sidebar-width;
+  transition: 0.4s ease;
+
+  &.collapsed {
+    width: $sidebar-width-collapsed;
+
+    .st-sidebar--helper {
+      transform: translateX(-#{$sidebar-width});
+    }
+  }
+
+  &--main {
+    position: relative;
+    width: $sidebar-width-collapsed;
+    min-width: $sidebar-width-collapsed;
+    overflow: hidden;
+    z-index: 2;
+    background-color: $white;
+    border-right: 2px solid $grey-gainsboro;
+  }
+
+  &--helper {
+    position: relative;
+    transition: 0.35s ease;
+    overflow: hidden;
+    z-index: 1;
+    background-color: $white-smoke;
+  }
+}
+
+.st-nav-link {
+  position: relative;
+  white-space: nowrap;
+
+  &-text--hidden {
+    min-height: $icon-button-dimensions;
+    min-width: $icon-button-dimensions;
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+  }
+
+  &.active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}

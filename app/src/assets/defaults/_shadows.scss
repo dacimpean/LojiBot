@@ -1,0 +1,49 @@
+$box-shadow-z1: 0 1px 3px 0 rgba(0, 0, 0, .05), 0 1px 2px 0 rgba(0, 0, 0, .2);
+$box-shadow-z2: 0 4px 5px rgba(50, 50, 93, .1), 0 1px 3px rgba(0, 0, 0, .08);
+$box-shadow-z3: 0 7px 14px rgba(50, 50, 93, .19), 0 3px 6px rgba(0, 0, 0, .08);
+$box-shadow-z4: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+$box-shadow-z5: 0 18px 35px rgba(50, 50, 93, .1), 0 8px 15px rgba(0, 0, 0, .07);
+$box-shadow-z6: 0px 0px 39px 0px rgba(0, 0, 0, 0.15), 0 2px 15px 0 rgba(0, 0, 0, 0.2);
+$box-shadow-z7: 0 18px 115px rgba(50, 50, 93, 0.34), 0 8px 35px rgba(0, 0, 0, 0.36);
+
+/*------------------------------------*\
+    Outer shadows
+\*------------------------------------*/
+
+.shadow-z1 {
+  box-shadow: $box-shadow-z1;
+}
+
+.shadow-z2 {
+  box-shadow: $box-shadow-z2;
+}
+
+.shadow-z3 {
+  box-shadow: $box-shadow-z3;
+}
+
+.shadow-z4 {
+  box-shadow: $box-shadow-z4;
+}
+
+.shadow-z5 {
+  box-shadow: $box-shadow-z5;
+}
+
+.shadow-z6 {
+  box-shadow: $box-shadow-z6;
+}
+
+.shadow-z7 {
+  box-shadow: $box-shadow-z7;
+}
+
+
+/*------------------------------------*\
+    Inset shadows
+\*------------------------------------*/
+
+.inset-shadow-right-z7 {
+  box-shadow: inset -27px 12px 59px -17px rgba(0, 0, 0, 0.3);
+}
+

@@ -1,0 +1,19 @@
+@import "./defaults/variables";
+@import "./defaults/fonts";
+@import "./defaults/colors";
+@import "./defaults/shadows";
+@import "./defaults/helpers";
+@import "./defaults/media";
+
+@import "./pages/pricing";
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-size: 16px;
+}
+

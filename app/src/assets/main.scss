@@ -1,0 +1,53 @@
+@import "./defaults/variables";
+@import "./defaults/helpers";
+@import "./defaults/shadows";
+@import "./defaults/colors";
+@import "./defaults/bootstrap-overrides";
+
+@import "./layout/sidebar";
+@import "./layout/header";
+@import "./layout/page";
+@import "/layout/404";
+
+@import "./components/buttons";
+@import "./components/divider";
+@import "./components/icon";
+@import "./components/table";
+@import "./components/user-menu";
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  width: 100vw;
+  height: 100vh;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+button {
+  &:focus, &:active {
+    outline: none;
+  }
+}
+
+#root {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+  justify-content: stretch;
+  width: 100%;
+  height: 100%;
+}

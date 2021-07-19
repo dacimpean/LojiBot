@@ -1,0 +1,73 @@
+/*------------------------------------*\
+    Outer shadows
+\*------------------------------------*/
+.shadow-z1 {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.2); }
+
+.shadow-z2 {
+  box-shadow: 0 4px 5px rgba(50, 50, 93, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); }
+
+.shadow-z3 {
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.19), 0 3px 6px rgba(0, 0, 0, 0.08); }
+
+.shadow-z4 {
+  box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07); }
+
+.shadow-z5 {
+  box-shadow: 0 18px 35px rgba(50, 50, 93, 0.1), 0 8px 15px rgba(0, 0, 0, 0.07); }
+
+.shadow-z6 {
+  box-shadow: 0px 0px 39px 0px rgba(0, 0, 0, 0.15), 0 2px 15px 0 rgba(0, 0, 0, 0.2); }
+
+.shadow-z7 {
+  box-shadow: 0 18px 115px rgba(50, 50, 93, 0.34), 0 8px 35px rgba(0, 0, 0, 0.36); }
+
+/*------------------------------------*\
+    Inset shadows
+\*------------------------------------*/
+.inset-shadow-right-z7 {
+  box-shadow: inset -27px 12px 59px -17px rgba(0, 0, 0, 0.3); }
+
+.hv-100 {
+  min-height: 100vh; }
+
+.hv-75 {
+  min-height: 75vh; }
+
+.hv-50 {
+  min-height: 50vh; }
+
+.hv-25 {
+  min-height: 25vh; }
+
+.time-switcher {
+  width: 100px; }
+  @media (min-width: 960px) {
+    .time-switcher {
+      width: 200px; } }
+
+.plan {
+  position: relative;
+  height: 100%;
+  cursor: pointer;
+  transition: .3s ease; }
+  @media (min-width: 960px) {
+    .plan:hover {
+      transform: scale(1.08); } }
+  @media (min-width: 960px) {
+    .plan--featured {
+      transform: scale(1.05); } }
+  .plan__badge {
+    position: absolute;
+    top: -0.5rem;
+    left: 0; }
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+html {
+  font-size: 16px; }
+
+/*# sourceMappingURL=main.css.map */

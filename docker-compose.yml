@@ -1,0 +1,51 @@
+version: "3.1"
+services:
+  app:
+    build: ./app
+    environment:
+      - REACT_APP_API_URL=http://localhost:8090/api
+      - REACT_APP_API_VERSION=1
+    volumes:
+      - ./app/src:/opt/app/src
+    ports:
+      - 8080:3000
+    restart: on-failure
+    depends_on:
+      - api
+
+  website:
+    build: website
+    #environment:
+      #- APP_URL=app.loji.host
+      #- WEBSITE_URL=loji.host
+    volumes:
+      - ./website:/opt/website
+    restart: on-failure
+    ports:
+      - 8081:8081
+
+  api:
+    build: ./api
+    command: ./bin/wait_for.sh postgres:5432 -- python ./lojibackend/manage.py runserver 0.0.0.0:8090
+    environment:
+      - POSTGRES_URI=postgres
+      #- API_URL=api.loji.host
+    volumes:
+      - ./api:/opt/api
+    restart: on-failure
+    ports:
+      - 8090:8090
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:10.6
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=loji_local
+      - POSTGRES_USER=loji
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432

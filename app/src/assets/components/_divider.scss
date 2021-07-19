@@ -1,0 +1,18 @@
+.divider {
+  position: relative;
+
+  &::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    border-top: 1px solid lightgrey;
+    width: 100%;
+    top: calc(50% + 1px);
+    z-index: 1;
+  }
+
+  & > span {
+    position: relative;
+    z-index: 2;
+  }
+}

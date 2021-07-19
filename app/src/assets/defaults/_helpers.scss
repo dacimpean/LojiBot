@@ -1,0 +1,7 @@
+.st-underline-none {
+  text-decoration: none !important;
+
+  &:active,&:visited,&:hover {
+    text-decoration: none !important;
+  }
+}

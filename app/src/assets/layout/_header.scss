@@ -1,0 +1,12 @@
+.st-header {
+  height: $header-height;
+  max-height: $header-height;
+
+  &-toggle {
+    transition: .4s ease;
+
+    &.collapsed {
+      transform: rotate(180deg);
+    }
+  }
+}

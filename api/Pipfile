@@ -1,0 +1,27 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+django = "*"
+drf-yasg = "*"
+
+[packages]
+djangorestframework = "*"
+django-rest-auth = "*"
+django-allauth = "*"
+djangorestframework-simplejwt = "*"
+psycopg2 = "*"
+drf-yasg = "*"
+django = "*"
+pycountry = "*"
+django-rest-swagger = "*"
+flex = "*"
+swagger-spec-validator = "*"
+django-cors-headers = "*"
+intuit-oauth = "*"
+gunicorn = "*"
+
+[requires]
+python_version = "3.*"

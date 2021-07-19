@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  {% block meta %}
+  {% endblock %}
+
+  {% include "components/default-styles.html" %}
+    <title>
+      Loji - Lojistic Software {% block title %}{% endblock %}
+    </title>
+  </head>
+  <body class="{% block body-class %}{% endblock %}">
+  {% include "components/navigation-bar.html" %}
+
+  {% block content %}
+  {% endblock %}
+
+  {% block footer %}
+  {% endblock %}
+  {% include "components/footer.html" %}
+
+  {% include "components/default-scripts.html" %}
+  {% block scripts %}
+  {% endblock %}
+  </body>
+</html>
+

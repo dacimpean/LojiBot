@@ -1,0 +1,46 @@
+{% extends 'common/main.html' %} <!-- logi/test/base_test.html -->
+{% block content %}
+<div id="wrapper" class="toggled">
+
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li>
+                <a href="/Dashboard"><span class="glyphicon glyphicon-dashboard"></span> <span
+                        class="hideme">DashboardRouter</span></a>
+            </li>
+            <li>
+                <a href="/Dashboard/myPOs/"><span class="fa fa-archive "></span> <span
+                        class="hideme">myPOs</span></a>
+            </li>
+            <li>
+                <a href="/Dashboard/graphs/"><span class="glyphicon glyphicon-stats"></span> <span
+                        class="hideme">Graphs</span></a>
+            </li>
+            <li>
+                <a href="/Dashboard/Reports/top10/"><span class="glyphicon glyphicon-list-alt"></span> <span
+                        class="hideme">Reports</span></a>
+            </li>
+            <li>
+                <a href="/Dashboard/FedEx/rate/"><span class="fa fa-usd"></span> <span
+                        class="hideme">FedEx Quote</span></a>
+            </li>
+            <li>
+                <a href="/Dashboard/LogiFiles/"><span class="fa fa-files-o"></span> <span
+                        class="hideme">Logi Files</span></a>
+            </li>
+        </ul>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    {% block content2 %}
+    {% endblock %}
+    <!-- /#page-content-wrapper -->
+
+
+</div>
+<!-- /#wrapper -->
+{% block script %}
+{% endblock %}
+{% endblock %}
