@@ -38,3 +38,11 @@ it can be `api`, `app` or any other service in the project
 * Django's Docs
 
 `//<api_url>/docs/`
+
+
+
+
+
+![Снимок экрана 2019-05-07 в 22 43 53](https://user-images.githubusercontent.com/87672296/130852361-17827fc4-66a3-4065-8d79-edc64b4e3311.png)
+
+![Снимок экрана 2019-05-07 в 22 49 38](https://user-images.githubusercontent.com/87672296/130852378-a90a5d4c-ba70-4d01-bcf4-25d8fa15ba7d.png)
